@@ -1,0 +1,92 @@
+# docker-compose.yml
+# Orquestra os serviços de frontend, backend e banco de dados usando Docker Compose.
+
+version: '3.8'
+
+services:
+  # Serviço de Banco de Dados MySQL
+  db:
+    image: mysql:8.0 # Imagem oficial do MySQL 8.0
+    container_name: mindtrack_mysql_db
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD} # Senha do root (use a do .env do backend)
+      MYSQL_DATABASE: ${DB_NAME} # Nome do banco de dados
+      MYSQL_USER: ${DB_USER} # Usuário do banco de dados
+      MYSQL_PASSWORD: ${DB_PASSWORD} # Senha do usuário do banco de dados
+      # MYSQL_ROOT_PASSWORD: root_password # Exemplo: substitua por uma senha segura
+      # MYSQL_DATABASE: habitos_db
+      # MYSQL_USER: user
+      # MYSQL_PASSWORD: password
+    ports:
+      - "3306:3306" # Mapeia a porta 3306 do contêiner para a porta 3306 da máquina host
+    volumes:
+      - db_data:/var/lib/mysql # Persiste os dados do banco de dados
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/1.sql # Executa o schema na inicialização
+      - ./database/initial_data.sql:/docker-entrypoint-initdb.d/2.sql # Executa dados iniciais
+    healthcheck: # Verifica se o banco de dados está pronto
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "${DB_USER}", "-p${DB_PASSWORD}"]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+    networks:
+      - mindtrack_network
+
+  # Serviço de Backend Flask (Python)
+  backend:
+    build:
+      context: ./backend # Constrói a imagem a partir do diretório backend
+      dockerfile: Dockerfile # Usa o Dockerfile dentro de ./backend
+    container_name: mindtrack_flask_backend
+    ports:
+      - "5000:5000" # Mapeia a porta 5000 do contêiner para a porta 5000 da máquina host
+    volumes:
+      - ./backend:/app # Monta o código fonte do backend no contêiner para hot-reloading
+      - /app/venv # Não sobrescreve o venv dentro do contêiner com o da máquina host
+      - ./backend/uploads/profile_pics:/app/uploads/profile_pics # Persiste as fotos de perfil
+    environment: # Variáveis de ambiente para o backend (podem vir do .env)
+      SECRET_KEY: ${SECRET_KEY}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      DB_HOST: db # Nome do serviço do banco de dados no Docker Compose
+      DB_PORT: 3306
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      MAIL_SERVER: ${MAIL_SERVER}
+      MAIL_PORT: ${MAIL_PORT}
+      MAIL_USE_TLS: ${MAIL_USE_TLS}
+      MAIL_USERNAME: ${MAIL_USERNAME}
+      MAIL_PASSWORD: ${MAIL_PASSWORD}
+      MAIL_DEFAULT_SENDER: ${MAIL_DEFAULT_SENDER}
+      FRONTEND_URL: ${FRONTEND_URL}
+    depends_on:
+      db:
+        condition: service_healthy # Garante que o DB esteja saudável antes de iniciar o backend
+    networks:
+      - mindtrack_network
+
+  # Serviço de Frontend React
+  frontend:
+    build:
+      context: ./frontend # Constrói a imagem a partir do diretório frontend
+      dockerfile: Dockerfile # Usa o Dockerfile dentro de ./frontend
+    container_name: mindtrack_react_frontend
+    ports:
+      - "3000:3000" # Mapeia a porta 3000 do contêiner para a porta 3000 da máquina host
+    volumes:
+      - ./frontend:/app # Monta o código fonte do frontend no contêiner para hot-reloading
+      - /app/node_modules # Não sobrescreve node_modules dentro do contêiner
+    environment: # Variáveis de ambiente para o frontend (se necessário, ex: URL do backend)
+      REACT_APP_API_BASE_URL: http://localhost:5000/api # URL do backend acessível do frontend
+    depends_on:
+      - backend # O frontend depende do backend estar rodando
+    networks:
+      - mindtrack_network
+
+# Redes para permitir a comunicação entre os serviços
+networks:
+  mindtrack_network:
+    driver: bridge
+
+# Volumes para persistir dados do banco de dados
+volumes:
+  db_data:

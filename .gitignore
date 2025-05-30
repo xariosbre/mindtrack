@@ -1,0 +1,39 @@
+# Ignorar diretórios de módulos de dependências
+/node_modules
+/venv
+
+# Ignorar arquivos de ambiente
+.env
+.flaskenv
+
+# Ignorar logs
+*.log
+logs/
+
+# Ignorar builds e caches
+/build
+/dist
+__pycache__/
+.pytest_cache/
+*.pyc
+
+# Ignorar uploads de arquivos (se não forem parte do repositório)
+/backend/uploads/
+
+# Ignorar arquivos de IDEs (ex: VS Code)
+.vscode/
+
+# Ignorar arquivos de sistema operacional
+.DS_Store
+Thumbs.db
+
+# Ignorar package-lock.json se você estiver usando yarn.lock, mas geralmente é bom incluir.
+# Se você usa npm, inclua package-lock.json.
+# Se você usa yarn, inclua yarn.lock e ignore package-lock.json.
+# Para este projeto, estamos usando npm, então package-lock.json DEVE ser incluído.
+
+# Arquivos específicos do React (se não for um projeto Create React App)
+# Para CRA, .gitignore já vem configurado, mas pode ser ajustado.
+# yarn-error.log
+# .pnp/
+# .pnp.js

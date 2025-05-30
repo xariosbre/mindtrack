@@ -1,0 +1,70 @@
+/*
+  Este arquivo pode ser usado para adicionar estilos CSS globais
+  que não são facilmente gerenciados pelo Tailwind CSS ou para
+  definir variáveis CSS personalizadas.
+
+  Para a maioria dos estilos, usaremos as classes utilitárias do Tailwind
+  diretamente nos componentes React.
+*/
+
+/* Exemplo: Estilos básicos para o corpo e títulos */
+body {
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Adicione quaisquer outros estilos globais aqui */
+/* Por exemplo, para um reset CSS mais robusto ou fontes personalizadas */
+/* @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap'); */
+/* A fonte 'Inter' já está sendo importada no index.html */
+
+/* Estilos para o spinner de carregamento (se não for totalmente Tailwind) */
+.spinner {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border-left-color: #6366f1; /* Cor primária do Tailwind (indigo-500) */
+  animation: spin 1s ease infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Estilos para mensagens de erro/sucesso */
+.message-box {
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+  font-weight: 500;
+}
+
+.message-box.success {
+  background-color: #d1fae5; /* green-100 */
+  color: #065f46; /* green-800 */
+}
+
+.message-box.error {
+  background-color: #fee2e2; /* red-100 */
+  color: #991b1b; /* red-800 */
+}
+
+/* Classes para botões, se necessário um estilo base que não seja apenas Tailwind */
+.btn-primary {
+  @apply bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-75 transition duration-200;
+}
+
+.btn-secondary {
+  @apply bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-75 transition duration-200;
+}
+
+.btn-danger {
+  @apply bg-red-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-75 transition duration-200;
+}

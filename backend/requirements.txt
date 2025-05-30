@@ -1,0 +1,11 @@
+# mindtrack/backend/requirements.txt
+
+Flask==2.3.3
+Flask-SQLAlchemy==3.0.5  # Embora não esteja sendo usado diretamente, mantenha se for usar ORM futuramente
+Flask-JWT-Extended==4.5.2
+Flask-Mail==0.9.1
+Flask-CORS==4.3.1
+PyMySQL==1.1.0
+bcrypt==4.0.1
+python-dotenv==1.0.0
+gunicorn # para produção
